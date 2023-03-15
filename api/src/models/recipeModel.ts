@@ -10,10 +10,10 @@ const recipeSchema = new Schema(
     },
     description: {
       type: String,
-      required: true,
+      required: false,
     },
     ingredients: {
-      type: Number,
+      type: [{ ingredient: String, amount: String }],
       required: true,
     },
     steps: {
@@ -24,25 +24,29 @@ const recipeSchema = new Schema(
       type: String,
       required: false,
     },
-    tags: [{ label: String }],
+    tags: { type: [{ label: String }], required: false },
     servings: {
       type: Number,
-      required: true,
+      required: false,
     },
     time: {
       type: String,
-      required: true,
+      required: false,
     },
     private: {
       type: Boolean,
-      required: true,
+      required: false,
+      default: false,
     },
-    rating: [
-      {
-        user_id: String,
-        rating: Number,
-      },
-    ],
+    rating: {
+      type: [
+        {
+          user_id: String,
+          rating: Number,
+        },
+      ],
+      required: false,
+    },
     user_id: {
       type: String,
       required: true,

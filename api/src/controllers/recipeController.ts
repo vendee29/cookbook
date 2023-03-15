@@ -1,61 +1,49 @@
 import { Request, Response } from "express";
 import { Recipe } from "../models/recipeModel.js";
+import { recipeService } from "../services/recipeService.js";
+import { UserRequest } from "../utils/types.js";
 
 import mongoose from "mongoose";
 
-// get all recipes
-export const getRecipes = async (req: Request, res: Response) => {
-  const user_id = req.user?._id;
-  const recipes = await Recipe.find({user_id}).sort({ createdAt: -1 }); // desc order
+// get all public recipes
+export const recipeController = {
+  async getAllPublicRecipes(req: Request, res: Response) {
+    try {
+      const data = await recipeService.getAllPublicRecipes();
+      res.status(200).json(data)
+    } catch (error) {
+      res.status(500).json(error)
+    }
+  },
 
+
+// get all recipes
+async getRecipes (req: UserRequest, res: Response) {
+  const user_id = req.user?._id;
+  const recipes = await recipeService.getRecipes(user_id)
   res.status(200).json(recipes);
-};
+},
 
 // get a single recipe
-export const getRecipe = async (req: Request, res: Response) => {
+async getRecipe (req: UserRequest, res: Response) {
   const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "No such recipe" });
+  const user_id = req.user?._id;
+  
+  try {
+    const recipe = await recipeService.getRecipe(id, user_id);
+    res.status(200).json(recipe);
+  } catch (error) {
+    res.status(404).json(error)
   }
-
-  const recipe = await Recipe.findById(id);
-  if (!recipe) {
-    return res.status(404).json({ error: "No such recipe" });
-  }
-
-  res.status(200).json(recipe);
-};
+},
 
 // create a new recipe
-export const createRecipe = async (req: Request, res: Response) => {
-  const { title, load, reps } = req.body;
-
-  let emptyFields: string[] = [];
-
-  if (!title) {
-    emptyFields.push("title");
-  }
-  if (!load) {
-    emptyFields.push("load");
-  }
-  if (!reps) {
-    emptyFields.push("reps");
-  }
-  if (emptyFields.length > 0) {
-    return res
-      .status(400)
-      .json({
-        error: "Please fill in all the fields",
-        emptyFields: emptyFields,
-      });
-  }
-
-  // add doc to db
+async createRecipe(req: UserRequest, res: Response) {
+  const recipe = req.body;
+  const user_id = req.user?._id;
   try {
-    const user_id = req.user?._id
-    const recipe = await Recipe.create({ title, load, reps, user_id });
-    res.status(200).json(recipe);
+    const createdRecipe = await recipeService.createRecipe({user_id, ...recipe})
+    res.status(200).json(createdRecipe);
   } catch (error) {
     if (error instanceof Error) {
       res.status(400).json({ error: error.message });
@@ -63,67 +51,45 @@ export const createRecipe = async (req: Request, res: Response) => {
       res.status(400).json({ error: "Something went wrong" });
     }
   }
-};
+},
 
 // delete a recipe
-export const deleteRecipe = async (req: Request, res: Response) => {
+async deleteRecipe (req: UserRequest, res: Response) {
   const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "No such recipe" });
+  const user_id = req.user?._id;
+  try {
+    const deletedRecipe = await recipeService.deleteRecipe(id, user_id);
+    res.status(200).json(deletedRecipe)
+  } catch (error) {
+    res.status(400).json(error)
   }
-
-  const recipe = await Recipe.findOneAndDelete({ _id: id });
-
-  if (!recipe) {
-    return res.status(404).json({ error: "No such recipe" });
-  }
-
-  res.status(200).json(recipe);
-};
+},
 
 // update a recipe
 
-export const updateRecipe = async (req: Request, res: Response) => {
+async updateRecipe (req: UserRequest, res: Response) {
   const { id } = req.params;
+  const user_id = req.user?._id;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "No such recipe" });
+  try {
+    const updatedRecipe = await recipeService.updateRecipe(id, req.body, user_id);
+    res.status(200).json(updatedRecipe)
+  } catch (error) {
+    res.status(400).json(error)
   }
+},
 
-  const recipe = await Recipe.findOneAndUpdate(
-    { _id: id },
-    {
-      ...req.body,
-    }
-  );
+// // rate a recipe
 
-  if (!recipe) {
-    return res.status(404).json({ error: "No such recipe" });
-  }
-
-  res.status(200).json(recipe);
-};
-
-// rate a recipe
-
-export const rateRecipe = async (req: Request, res: Response) => {
+async rateRecipe (req: UserRequest, res: Response) {
     const { id } = req.params;
-  
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(404).json({ error: "No such recipe" });
+    const user_id = req.user?._id;
+    const rating = req.body.rating;
+    try {
+      const ratedRecipe = await recipeService.rateRecipe(id, user_id, rating);
+      res.status(200).json(ratedRecipe)
+    } catch (error) {
+      res.status(400).json(error)
     }
-  
-    const recipe = await Recipe.findOneAndUpdate(
-      { _id: id },
-      {
-        ...req.body,
-      }
-    );
-  
-    if (!recipe) {
-      return res.status(404).json({ error: "No such recipe" });
-    }
-  
-    res.status(200).json(recipe);
-  };
+  }
+}
