@@ -1,6 +1,8 @@
 import express, { Express, NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { router as recipeRoutes } from "./routes/recipeRoutes.js";
+import { router as userRoutes } from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -20,8 +22,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // routes
-// app.use("/api/recipes", recipeRoutes);
-// app.use("/api/user", userRoutes)
+app.use("/api/recipes", recipeRoutes);
+app.use("/api/user", userRoutes)
 
 // connect to db
 const MONGO_URI = process.env.MONGO_URI;
