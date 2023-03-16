@@ -30,7 +30,10 @@ export const recipesRepository = {
 
   // delete a recipe
   async deleteRecipe(id: any, user_id: any) {
-    const deletedRecipe = await Recipe.findOneAndDelete({ _id: id, user_id: user_id });
+    const deletedRecipe = await Recipe.findOneAndDelete({
+      _id: id,
+      user_id: user_id,
+    });
     return deletedRecipe;
   },
 
@@ -74,5 +77,10 @@ export const recipesRepository = {
 
       return ratedRecipe;
     }
+  },
+
+  async getAllTags() {
+    const tags = await Recipe.distinct("tags.label", { private: false });
+    return tags;
   },
 };

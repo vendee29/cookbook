@@ -85,4 +85,12 @@ export const recipeService = {
     }
     return ratedRecipe;
   },
+
+  async getAllTags() {
+    const tags = await recipes.getAllTags();
+    if(!tags) {
+      return [];
+    }
+    return tags;
+  }
 };
