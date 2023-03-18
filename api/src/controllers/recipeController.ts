@@ -1,18 +1,16 @@
-import { Request, Response } from "express";
-import { Recipe } from "../models/recipeModel.js";
+import { Response } from "express";
 import { recipeService } from "../services/recipeService.js";
 import { UserRequest } from "../utils/types.js";
 
-import mongoose from "mongoose";
-
 // get all public recipes
 export const recipeController = {
-  async getAllPublicRecipes(req: Request, res: Response) {
+  async getAllPublicRecipes(req: UserRequest, res: Response) {
+    const searchTerm = req.query.q as string | undefined;
     try {
-      const data = await recipeService.getAllPublicRecipes();
+      const data = await recipeService.getAllPublicRecipes(searchTerm);
       res.status(200).json(data);
     } catch (error) {
-      res.status(500).json(error);
+      res.status(400).json(error);
     }
   },
 
@@ -68,7 +66,6 @@ export const recipeController = {
   },
 
   // update a recipe
-
   async updateRecipe(req: UserRequest, res: Response) {
     const { id } = req.params;
     const user_id = req.user?._id;
@@ -85,8 +82,7 @@ export const recipeController = {
     }
   },
 
-  // // rate a recipe
-
+  // rate a recipe
   async rateRecipe(req: UserRequest, res: Response) {
     const { id } = req.params;
     const user_id = req.user?._id;
@@ -99,6 +95,7 @@ export const recipeController = {
     }
   },
 
+  // get all recipe tags
   async getAllTags(req: UserRequest, res: Response) {
     try {
       const tags = await recipeService.getAllTags();

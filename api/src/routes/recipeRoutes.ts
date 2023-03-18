@@ -1,18 +1,18 @@
-import express, { Router } from "express";
-import { recipeController } from "../controllers/recipeController.js";
+import { Router } from "express";
 import { auth } from "../middleware/auth.js";
+import { recipeController } from "../controllers/recipeController.js";
 
-export const router: Router = express.Router();
+export const router = Router();
+
+router.use(auth);
 
 // GET all recipes
 router.get("/all", recipeController.getAllPublicRecipes);
 
-router.use(auth);
-
 // GET all user's recipes
 router.get("/", recipeController.getRecipes);
 
-// GET all tags
+// GET all recipe tags
 router.get("/tags", recipeController.getAllTags);
 
 // GET a single recipe
@@ -29,4 +29,3 @@ router.put("/:id", recipeController.updateRecipe);
 
 // RATE a recipe
 router.patch("/:id", recipeController.rateRecipe);
-

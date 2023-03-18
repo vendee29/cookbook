@@ -1,20 +1,27 @@
-import { recipesRepository as recipes } from "../repositories/recipesRepository.js";
-import { RecipeValue } from "../utils/types.js";
 import mongoose from "mongoose";
+import { recipesRepository } from "../repositories/recipesRepository.js";
+import { RecipeValue } from "../utils/types.js";
 
 export const recipeService = {
-  async getAllPublicRecipes() {
-    const data = await recipes.getAllPublicRecipes();
-    return data;
+  async getAllPublicRecipes(searchTerm: string | undefined) {
+    try {
+      const foundRecipes = await recipesRepository.getAllPublicRecipes(
+        searchTerm
+      );
+      if (!foundRecipes) return [];
+      return foundRecipes;
+    } catch (error) {
+      throw new Error("Error searching for recipes");
+    }
   },
 
   async getRecipes(user_id: any) {
-    const data = await recipes.getRecipes(user_id);
+    const data = await recipesRepository.getRecipes(user_id);
     return data;
   },
 
   async getRecipe(id: any, user_id: any) {
-    const recipe = await recipes.getRecipe(id, user_id);
+    const recipe = await recipesRepository.getRecipe(id, user_id);
     if (!recipe) {
       throw new Error("No such recipe");
     }
@@ -40,7 +47,7 @@ export const recipeService = {
       };
     }
     try {
-      const createdRecipe = await recipes.createRecipe(recipe);
+      const createdRecipe = await recipesRepository.createRecipe(recipe);
       return createdRecipe;
     } catch (error) {
       if (error instanceof Error) {
@@ -55,7 +62,7 @@ export const recipeService = {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new Error("No such recipe");
     }
-    const deletedRecipe = await recipes.deleteRecipe(id, user_id);
+    const deletedRecipe = await recipesRepository.deleteRecipe(id, user_id);
     if (!deletedRecipe) {
       throw new Error("No such recipe");
     }
@@ -66,7 +73,11 @@ export const recipeService = {
     if (!mongoose.Types.ObjectId.isValid(recipe_id)) {
       throw new Error("No such recipe");
     }
-    const updatedRecipe = await recipes.updateRecipe(recipe_id, recipe, user_id);
+    const updatedRecipe = await recipesRepository.updateRecipe(
+      recipe_id,
+      recipe,
+      user_id
+    );
     if (!updatedRecipe) {
       throw new Error("No such recipe");
     }
@@ -78,7 +89,11 @@ export const recipeService = {
       throw new Error("No such recipe");
     }
 
-    const ratedRecipe = await recipes.rateRecipe(recipe_id, user_id, rating);
+    const ratedRecipe = await recipesRepository.rateRecipe(
+      recipe_id,
+      user_id,
+      rating
+    );
 
     if (!ratedRecipe) {
       throw new Error("No such recipe");
@@ -87,10 +102,10 @@ export const recipeService = {
   },
 
   async getAllTags() {
-    const tags = await recipes.getAllTags();
-    if(!tags) {
+    const tags = await recipesRepository.getAllTags();
+    if (!tags) {
       return [];
     }
     return tags;
-  }
+  },
 };

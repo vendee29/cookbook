@@ -1,13 +1,30 @@
-import { Recipe } from "../models/recipeModel.js";
 import mongoose from "mongoose";
+import { Recipe } from "../models/recipeModel.js";
 import { RecipeValue } from "../utils/types.js";
 
 export const recipesRepository = {
-  async getAllPublicRecipes() {
-    const recipes = await Recipe.find({ private: false }).sort({
-      createdAt: -1,
-    });
-    return recipes;
+  async getAllPublicRecipes(searchTerm: string | undefined) {
+    if (searchTerm === undefined) {
+      const recipes = await Recipe.find({ private: false }).sort({
+        createdAt: -1,
+      });
+      return recipes;
+    } else {
+      const recipes = await Recipe.find({
+        $and: [
+          {
+            $or: [
+              { title: { $regex: searchTerm, $options: "i" } },
+              { description: { $regex: searchTerm, $options: "i" } },
+              { steps: { $regex: searchTerm, $options: "i" } },
+              { "tags.label": { $regex: searchTerm, $options: "i" } },
+            ],
+          },
+          { private: false },
+        ],
+      }).exec();
+      return recipes;
+    }
   },
 
   // get all recipes of one user
@@ -38,7 +55,6 @@ export const recipesRepository = {
   },
 
   // update a recipe
-
   async updateRecipe(recipe_id: any, recipe: RecipeValue, user_id: any) {
     const updatedRecipe = await Recipe.findOneAndUpdate(
       { _id: recipe_id, user_id: user_id },
@@ -49,7 +65,6 @@ export const recipesRepository = {
   },
 
   // rate a recipe
-
   async rateRecipe(recipe_id: any, user_id: any, rating: number) {
     const recipe = await Recipe.findOne({
       _id: recipe_id,
@@ -78,7 +93,7 @@ export const recipesRepository = {
       return ratedRecipe;
     }
   },
-
+  //get all recipe tags
   async getAllTags() {
     const tags = await Recipe.distinct("tags.label", { private: false });
     return tags;
