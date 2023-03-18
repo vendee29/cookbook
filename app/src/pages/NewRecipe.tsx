@@ -1,10 +1,12 @@
 import * as React from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { TagAutocomplete } from "../components/TagAutocomplete";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Navigate } from "react-router-dom";
+
+import { useAuthContext } from "../hooks/useAuthContext";
 import { useAddRecipe } from "../hooks/useAddRecipe";
+import { TagAutocomplete } from "../components/TagAutocomplete";
+import recipeLogo from "../assets/recipe.svg";
 
 export const NewRecipe = () => {
   const { state: authState } = useAuthContext();
@@ -49,7 +51,7 @@ export const NewRecipe = () => {
     ev.preventDefault();
 
     if (!authState.user) {
-      return <Navigate to="/" />;
+      return <Navigate to="/login" />;
     }
     const inputTitle = ev.currentTarget.elements.namedItem(
       "title"
@@ -63,7 +65,10 @@ export const NewRecipe = () => {
     const inputTime = ev.currentTarget.elements.namedItem(
       "time"
     ) as HTMLInputElement;
-    const inputIngredients = ingredientFields as unknown as {ingredient: string, amount: string}[];
+    const inputIngredients = ingredientFields as unknown as {
+      ingredient: string;
+      amount: string;
+    }[];
     const inputImageUrl = ev.currentTarget.elements.namedItem(
       "image-url"
     ) as HTMLInputElement;
@@ -82,12 +87,21 @@ export const NewRecipe = () => {
       tags: tags.map((tag) => ({ label: tag })),
     };
     console.log({ recipe });
-    mutate({token: authState.user.token, formValues: recipe})
+    mutate({ token: authState.user.token, formValues: recipe });
   };
 
   return (
     <form className="create-recipe" onSubmit={handleSubmit}>
       <h3 className="form-heading">Add a New Recipe</h3>
+
+      <img
+        src={recipeLogo}
+        alt="recipe-book"
+        width={70}
+        style={{ display: "block", margin: "0 auto" }}
+      />
+
+      <br />
 
       <label>Title:</label>
       <input type="text" name="title" required className="form-input" />

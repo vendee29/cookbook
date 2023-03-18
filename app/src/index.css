@@ -9,11 +9,12 @@
 body {
   background: #fdd4ab92;
   margin: 0;
-  font-family: "Calibri";
+  font-family: "Roboto";
 }
 header {
   background: #fff;
   width: 100vw;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)
 }
 header .container {
   max-width: 1400px;
@@ -43,7 +44,7 @@ header a {
 
 /* homepage */
 .home {
-
+  margin: 0;
 }
 
 .recipe-list {
@@ -68,14 +69,33 @@ input[name="search"] {
   margin: 0 auto 10px auto;
 }
 
+.recipe-details-tags {
+  margin: 10px 0 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.recipe-card img {
+  width: 90%;
+  display: block;
+  margin: auto;
+  border-radius: 10px;
+}
+
 /* new recipe form */
 .create-recipe {
-  width: 600px;
+  max-width: 600px;
   margin: 0 auto;
+}
+
+.create-recipe label {
+  font-family: 'Kurale', serif;
 }
 
 .form-heading {
   text-align: center;
+  font-family: 'Kurale', serif;
 }
 
 .form-small {
@@ -108,8 +128,27 @@ input[name="search"] {
   margin: 10px 0;
 }
 
-.ql-editor{
+.markdown-editor .ql-editor{
   min-height:150px;
+  background-color: white;
+}
+
+.markdown-editor .ql-toolbar {
+  background-color: rgba(255, 255, 255, 0.549);
+}
+
+.recipe-details-steps .ql-editor{
+  height: auto;
+  padding: 0 8px;
+  font-family: "Roboto";
+  font-size: 14px;
+  
+}
+
+.recipe-details-steps .ql-container{
+  height: 50px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 input, textarea {
@@ -119,6 +158,7 @@ input, textarea {
   width: 100%;
   border: 1px solid #ddd;
   border-radius: 4px;
+  font-family: "Roboto";
 
 }
 
@@ -132,7 +172,7 @@ form button {
   border: 0;
   color: #fff;
   padding: 10px;
-  font-family: "Calibri";
+  font-family: "Roboto";
   border-radius: 4px;
   cursor: pointer;
 }
@@ -157,16 +197,42 @@ nav a,
 nav button {
   margin-left: 10px;
 }
+
+nav span {
+  font-family: 'Kurale', serif;
+}
+
 nav button {
   background: #fff;
   color: var(--primary);
   border: 2px solid var(--primary);
   padding: 6px 10px;
   border-radius: 4px;
-  font-family: "Calibri";
+  font-family: 'Kurale', serif;
   cursor: pointer;
   font-size: 1em;
   margin-left: 10px;
+}
+
+/* drawer */
+
+.drawer-link {
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  margin: 0 0 10px 0;
+}
+
+.drawer-link:hover {
+  color: var(--primary)
+}
+
+.drawer-link:active {
+  color: var(--primary)
+}
+
+.drawer-link:visited {
+  color: #8e412e;
 }
 
 /* auth forms */
@@ -177,6 +243,27 @@ form.login {
   padding: 20px;
   background: #fff;
   border-radius: 4px;
+}
+
+/*scrollbar*/
+.recipe-details-steps {
+  scrollbar-width: auto;
+  scrollbar-color: #f1b6b3 #ffffff;
+}
+
+/* Chrome, Edge, and Safari */
+.recipe-details-steps ::-webkit-scrollbar {
+  width: 5px;
+}
+
+.recipe-details-steps ::-webkit-scrollbar-track {
+  background: hsl(0, 100%, 97%);
+  border-radius: 10px;
+}
+
+.recipe-details-steps ::-webkit-scrollbar-thumb {
+  background-color: #ff9590;
+  border-radius: 10px;
 }
 
 @media screen and (max-width: 690px) {
@@ -191,6 +278,10 @@ form.login {
 }
 
 @media screen and (max-width: 600px) {
+  .container {
+    min-width: 350px;
+  }
+
   .home {
     min-width: 350px;
     margin: 0 auto;
@@ -198,5 +289,9 @@ form.login {
 
   .home > div {
     width: 95%;
+  }
+
+  .navbar-left img[alt="logo"] {
+    display: none;
   }
 }

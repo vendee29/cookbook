@@ -1,9 +1,10 @@
 import * as React from "react";
-import Chip from "@mui/material/Chip";
 import Autocomplete from "@mui/material/Autocomplete";
+import Chip from "@mui/material/Chip";
 import TextField from "@mui/material/TextField";
-import { useGetAllTags } from "../hooks/useGetAllTags";
+
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useGetAllTags } from "../hooks/useGetAllTags";
 
 export const TagAutocomplete = (props: {
   onAddTags: (tags: string[]) => void;
@@ -14,7 +15,6 @@ export const TagAutocomplete = (props: {
     ev: React.SyntheticEvent<Element, Event>,
     newValue: string[]
   ) => {
-    // console.log(newValue);
     props.onAddTags(newValue);
   };
   return (
