@@ -8,7 +8,7 @@ export const userController = {
     try {
       const user = await userService.loginUser(email, password);
       const token = createToken(user._id);
-      res.status(200).json({ email, token });
+      res.status(200).json({ email, token, id: user._id });
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ error: error.message });
@@ -22,7 +22,7 @@ export const userController = {
     try {
       const user = await userService.signupUser(email, password);
       const token = createToken(user._id);
-      res.status(200).json({ email, token });
+      res.status(200).json({ email, token, id: user._id });
     } catch (error) {
       if (error instanceof Error) {
         res.status(400).json({ error: error.message });

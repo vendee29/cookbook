@@ -28,9 +28,19 @@ export const recipesRepository = {
   },
 
   // get all recipes of one user
-  async getRecipes(user_id: string) {
+  async getRecipes(user_id: string, searchTerm: string | undefined) {
+    if (searchTerm === undefined) {
     const recipes = await Recipe.find({ user_id }).sort({ createdAt: -1 }); // desc order
     return recipes;
+    } else {
+      const recipes = await Recipe.find({
+        $and: [
+          { "tags.label": { $regex: searchTerm, $options: "i" } },
+          { user_id },
+        ],
+      }).exec();
+      return recipes;
+    }
   },
 
   // get a single recipe

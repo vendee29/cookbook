@@ -15,8 +15,9 @@ export const recipeService = {
     }
   },
 
-  async getRecipes(user_id: any) {
-    const data = await recipesRepository.getRecipes(user_id);
+  async getRecipes(user_id: any, searchTerm: string | undefined) {
+    const data = await recipesRepository.getRecipes(user_id, searchTerm);
+    if (!data) return [];
     return data;
   },
 

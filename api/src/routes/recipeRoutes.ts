@@ -10,7 +10,7 @@ router.use(auth);
 router.get("/all", recipeController.getAllPublicRecipes);
 
 // GET all user's recipes
-router.get("/", recipeController.getRecipes);
+router.get("/me", recipeController.getRecipes);
 
 // GET all recipe tags
 router.get("/tags", recipeController.getAllTags);

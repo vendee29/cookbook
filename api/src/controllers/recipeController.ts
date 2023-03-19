@@ -16,8 +16,9 @@ export const recipeController = {
 
   // get all recipes
   async getRecipes(req: UserRequest, res: Response) {
+    const searchTerm = req.query.q as string | undefined
     const user_id = req.user?._id;
-    const recipes = await recipeService.getRecipes(user_id);
+    const recipes = await recipeService.getRecipes(user_id, searchTerm);
     res.status(200).json(recipes);
   },
 
