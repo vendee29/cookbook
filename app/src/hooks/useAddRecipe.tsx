@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 import { throwError } from "../utils/throwError";
-import { CreatedRecipe, RecipeValue } from "../utils/types";
+import { CreatedRecipe } from "../utils/types";
 
 interface AddRecipeMutation {
   token: string;
@@ -11,6 +12,7 @@ interface AddRecipeMutation {
 
 export function useAddRecipe() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: async ({ token, formValues }: AddRecipeMutation) => {
       try {
@@ -26,14 +28,13 @@ export function useAddRecipe() {
       }
     },
     onError: (error) => {
-        console.log(error)
+      console.log(error);
     },
-    onSuccess: (data: RecipeValue) => {
-        console.log("SUCCESS");
-        console.log(data)
+    onSuccess: () => {
       queryClient.invalidateQueries(["recipes"], {
         exact: true,
       });
+      navigate("/");
     },
   });
 }

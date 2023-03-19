@@ -1,9 +1,11 @@
 import * as React from "react";
+import axios from "axios";
 import { useAuthContext } from "./useAuthContext";
 import { AuthActionKind } from "../context/AuthContext";
+import { User } from "../utils/types";
 
 export const useSignup = () => {
-  const [error, setError] = React.useState(null);
+  const [error, setError] = React.useState<null | string>(null);
   const [isLoading, setIsLoading] = React.useState(false);
   const { dispatch } = useAuthContext();
 
@@ -11,19 +13,19 @@ export const useSignup = () => {
     setIsLoading(true);
     setError(null);
 
-    const response = await fetch("/api/user/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const response = await axios.post<User>(
+        "/api/user/signup",
+        { email, password },
+        {
+          headers: { "Content-Type": "application/json" },
+          validateStatus(status) {
+            return status === 200;
+          },
+        }
+      );
+      const json = response.data;
 
-    const json = await response.json();
-
-    if (!response.ok) {
-      setIsLoading(false);
-      setError(json.error);
-    } else {
-      // save the user to local storage
       localStorage.setItem("user", JSON.stringify(json));
 
       // update the auth context
@@ -31,6 +33,13 @@ export const useSignup = () => {
 
       setIsLoading(false);
       setError(null);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        setError(error.response?.data.error);
+      } else {
+        setError("Something went wrong...");
+      }
+      setIsLoading(false);
     }
   };
   return { signup, isLoading, error };

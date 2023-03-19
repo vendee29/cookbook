@@ -8,7 +8,7 @@ import {
 import { throwError } from "../utils/throwError";
 import { RecipeValue } from "../utils/types";
 
-export function useGetAllRecipes(
+export function useGetMyRecipes(
   token: string | undefined,
   searchTerm: string | undefined
 ): UseQueryResult<RecipeValue[] | null, Error> {
@@ -18,8 +18,8 @@ export function useGetAllRecipes(
     queryFn: async () => {
       const url =
         searchTerm !== undefined
-          ? `/api/recipes/all?q=${searchTerm}`
-          : `/api/recipes/all`;
+          ? `/api/recipes/me?q=${searchTerm}`
+          : `/api/recipes/me`;
       try {
         const result = await axios.get<RecipeValue[] | null>(url, {
           headers: { Authorization: `Bearer ${token}` },
@@ -28,7 +28,7 @@ export function useGetAllRecipes(
           },
         });
         if (searchTerm === undefined) {
-          queryClient.setQueryData(["recipes", "all"], result.data);
+          queryClient.setQueryData(["recipes", "me"], result.data);
         }
         return result.data;
       } catch (err) {

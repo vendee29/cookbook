@@ -1,15 +1,19 @@
 import axios from "axios";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { throwError } from "../utils/throwError";
 
-export function useGetAllTags(
-  token: string | undefined
-): UseQueryResult<string[], Error> {
+import { throwError } from "../utils/throwError";
+import { RecipeValue } from "../utils/types";
+
+export function useGetRecipe(
+  token: string | undefined,
+  recipeId: string
+): UseQueryResult<RecipeValue | null, Error> {
   return useQuery({
-    queryKey: ["tags"],
+    queryKey: ["recipe", recipeId],
     queryFn: async () => {
+      const url = `/api/recipes/${recipeId}`;
       try {
-        const result = await axios.get<string[]>(`/api/recipes/tags`, {
+        const result = await axios.get<RecipeValue | null>(url, {
           headers: { Authorization: `Bearer ${token}` },
           validateStatus(status) {
             return status === 200;
