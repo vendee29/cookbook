@@ -1,46 +1,42 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
-import Chip from "@mui/material/Chip";
+import Avatar from "@mui/material/Avatar";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
+import Chip from "@mui/material/Chip";
 import Collapse from "@mui/material/Collapse";
-import Avatar from "@mui/material/Avatar";
-import IconButton, { IconButtonProps } from "@mui/material/IconButton";
-import Typography from "@mui/material/Typography";
 import Rating from "@mui/material/Rating";
-import { red } from "@mui/material/colors";
-
-// utils & hooks
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import { calculateRating } from "../utils/calculateRating";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { useRateRecipe } from "../hooks/useRateRecipe";
-import { RecipeValue } from "../utils/types";
 
 import { Navigate } from "react-router-dom";
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
 
+import { calculateRating } from "../utils/calculateRating";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useRateRecipe } from "../hooks/useRateRecipe";
+import { RecipeMenu } from "./RecipeMenu";
+import { RecipeValue } from "../utils/types";
+
+// assets
 import chevronDown from "../assets/chevronDown.svg";
 import recipePlaceholder from "../assets/recipe-placeholder.jpg";
 
-interface ExpandMoreProps extends IconButtonProps {
+interface ExpandMoreProps {
   expand: boolean;
+  onClick: () => void;
 }
 
-const ExpandMore = styled((props: ExpandMoreProps) => {
-  const { expand, ...other } = props;
-  return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-  transform: !expand ? "rotate(0deg)" : "rotate(180deg)",
-  marginLeft: "auto",
-  transition: theme.transitions.create("transform", {
-    duration: theme.transitions.duration.shortest,
-  }),
-}));
+const ExpandMore = ({ expand, onClick }: ExpandMoreProps) => {
+  const classNames = ["expand-more", expand ? "rotate" : ""].join(" ");
+  return (
+    <div className={classNames} onClick={onClick}>
+      <img width={20} src={chevronDown} />
+    </div>
+  );
+};
 
 export const RecipeCard = (props: {
   recipe: RecipeValue;
@@ -77,9 +73,7 @@ export const RecipeCard = (props: {
       }}
     >
       <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: red[300] }} aria-label="recipe"></Avatar>
-        }
+        avatar={<Avatar sx={{ bgcolor: "#e57373" }} aria-label="recipe" />}
         title={props.recipe.title}
         titleTypographyProps={{
           fontSize: "15px",
@@ -90,21 +84,22 @@ export const RecipeCard = (props: {
           addSuffix: true,
         })}
         subheaderTypographyProps={{ fontFamily: "Kurale, serif" }}
+        action={
+          <RecipeMenu
+            recipeId={props.recipe._id}
+            disabledButtons={authState.user?.id !== props.recipe.user_id}
+          />
+        }
       />
+
       <CardMedia
         component="img"
         height="194"
         image={props.recipe.img ?? recipePlaceholder}
         alt={props.recipe.title}
       />
-      <CardContent>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ fontFamily: "Roboto" }}
-        >
-          {props.recipe.description}
-        </Typography>
+      <CardContent className="card-content">
+        <p>{props.recipe.description}</p>
         {props.recipe.tags && props.recipe.tags.length > 0 && (
           <div className="recipe-details-tags">
             {props.recipe.tags.map((tag, index) => {
@@ -114,41 +109,36 @@ export const RecipeCard = (props: {
                   label={tag.label}
                   variant="outlined"
                   onClick={() => props.onTagClick(tag.label)}
-                  sx={{ fontFamily: "Kurale, serif" }}
                 />
               );
             })}
           </div>
         )}
       </CardContent>
-      <CardActions disableSpacing>
+      <CardActions disableSpacing sx={{ padding: "0 8px 15px 8px" }}>
         <Rating
           sx={{ marginRight: 1 }}
           name="simple-controlled"
           value={calculateRating(props.recipe.rating)}
           onChange={handleRating}
         />
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          sx={{ fontFamily: "Kurale, serif" }}
-        >
+        <span className="card-ratings">
           {props.recipe.rating?.length + " " + "ratings"}
-        </Typography>
-        <ExpandMore
-          expand={expanded}
-          onClick={handleExpandClick}
-          aria-expanded={expanded}
-          aria-label="show more"
-        >
-          <img width={20} src={chevronDown}></img>
-        </ExpandMore>
+        </span>
+        <ExpandMore expand={expanded} onClick={handleExpandClick} />
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent sx={{ fontFamily: "Roboto", padding: "0 auto 0 auto" }}>
-          <h4 style={{ fontFamily: "Kurale, serif" }}>Ingredients:</h4>
-          {props.recipe.ingredients ? (
-            <ul style={{ listStyleType: "circle", fontSize: "14px" }}>
+        <CardContent
+          className="expanded-card-content"
+          sx={{ padding: "0 auto 0 auto" }}
+        >
+          <p className="servings-time">
+            Servings: {props.recipe.servings ?? ""} | Time:{" "}
+            {props.recipe.time ?? ""}
+          </p>
+          <h4>Ingredients:</h4>
+          {props.recipe.ingredients && props.recipe.ingredients.length > 0 ? (
+            <ul>
               {props.recipe.ingredients.map((ingredient, index) => (
                 <li key={index}>
                   {`${ingredient.amount} ${ingredient.ingredient}`}
@@ -159,8 +149,7 @@ export const RecipeCard = (props: {
             <div>No ingredients</div>
           )}
 
-          <h4 style={{ fontFamily: "Kurale, serif" }}>Method:</h4>
-
+          <h4>Method:</h4>
           {props.recipe.steps && (
             <ReactQuill
               className="recipe-details-steps"
