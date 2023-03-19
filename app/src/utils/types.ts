@@ -1,9 +1,9 @@
 export interface CreatedRecipe {
-  title: string;
+  title?: string;
   description?: string;
   img?: string;
   ingredients?: { ingredient: string; amount: string }[];
-  private: boolean;
+  private?: boolean;
   servings?: number;
   steps?: string;
   tags?: { label: string }[];
@@ -13,7 +13,7 @@ export interface CreatedRecipe {
 export interface RecipeValue extends CreatedRecipe {
   _id: string;
   rating?: { user_id: string; rating: number }[];
-  user_id?: string;
+  user_id: string;
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -22,4 +22,5 @@ export interface RecipeValue extends CreatedRecipe {
 export type User = {
   email: string;
   token: string;
+  id: string;
 };

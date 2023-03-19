@@ -2,8 +2,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useAuthContext } from "./hooks/useAuthContext";
 
 // pages & components
+import { EditRecipe } from "./pages/EditRecipe";
 import { Home } from "./pages/Home";
 import { Login } from "./pages/Login";
+import { MyRecipes } from "./pages/MyRecipes";
 import { Navbar } from "./components/Navbar";
 import { NewRecipe } from "./pages/NewRecipe";
 import { Signup } from "./pages/Signup";
@@ -31,8 +33,21 @@ function App() {
             />
             <Route
               path="/add"
-              element={<NewRecipe />}
-              // element={authState.user ? <NewRecipe /> : <Navigate to="/login" />}
+              element={
+                authState.user ? <NewRecipe /> : <Navigate to="/login" />
+              }
+            />
+            <Route
+              path="/edit/:recipeId"
+              element={
+                authState.user ? <EditRecipe /> : <Navigate to="/login" />
+              }
+            />
+            <Route
+              path="/myrecipes"
+              element={
+                authState.user ? <MyRecipes /> : <Navigate to="/login" />
+              }
             />
           </Routes>
         </div>

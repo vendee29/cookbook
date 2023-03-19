@@ -1,48 +1,65 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+
 import { Link } from "react-router-dom";
-import menu from "../assets/menu.svg";
+import { useQueryClient } from "@tanstack/react-query";
 
-export const TemporaryDrawer = () => {
+import menuIcon from "../assets/menu.svg";
+
+export const TemporaryDrawer = (props: { disabled: boolean }) => {
   const [state, setState] = React.useState(false);
+  const queryClient = useQueryClient();
 
-  const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === "keydown" &&
-        ((event as React.KeyboardEvent).key === "Tab" ||
-          (event as React.KeyboardEvent).key === "Shift")
-      ) {
-        return;
-      }
-      setState(open);
-    };
+  const allRecipesHandler = () => {
+    const allRecipes = queryClient.getQueryData(["recipes", "all"], {
+      exact: true,
+    });
+    queryClient.setQueryData(["recipes"], allRecipes);
+  };
+
+  const myRecipesHandler = () => {
+    const allRecipes = queryClient.getQueryData(["recipes", "me"], {
+      exact: true,
+    });
+    queryClient.setQueryData(["recipes"], allRecipes);
+  };
+
+  const toggleDrawer = (open: boolean) => (event: React.MouseEvent) => {
+    setState(open);
+  };
 
   const list = () => (
     <Box
       role="presentation"
       onClick={toggleDrawer(false)}
-      onKeyDown={toggleDrawer(false)}
-      sx={{fontFamily: "Kurale, serif"}}
+      sx={{ fontFamily: "Kurale, serif" }}
     >
-      <h3 style={{textAlign: "center"}}>Recipes</h3>
+      <h3 className="drawer-heading">Recipes</h3>
       <Divider />
-      <div style={{display: "flex", flexDirection: "column", textAlign: "center", marginTop: 20, gap: 10}}>
-        <Link className="drawer-link" to="/">All recipes</Link>
-        <Link className="drawer-link" to="/">My recipes</Link>
-        <Link className="drawer-link" to="/add">Add new</Link>
+      <div className="drawer-list">
+        <Link to="/" onClick={allRecipesHandler}>
+          All recipes
+        </Link>
+        <Link to="/myrecipes" onClick={myRecipesHandler}>
+          My recipes
+        </Link>
+        <Link to="/add">Add new</Link>
       </div>
     </Box>
   );
 
   return (
     <div>
-      <Button onClick={toggleDrawer(true)} sx={{ minWidth: 20 }}>
-        <img src={menu} alt="menu" width={20} />
-      </Button>
+      <IconButton
+        onClick={toggleDrawer(true)}
+        sx={{ minWidth: 20 }}
+        disabled={props.disabled}
+      >
+        <img src={menuIcon} alt="menu" width={20} />
+      </IconButton>
       <Drawer
         anchor="left"
         open={state}
