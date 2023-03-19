@@ -1,9 +1,9 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useGetAllRecipes } from "../hooks/useGetAllRecipes";
 
-// components
 import { RecipeCard } from "../components/RecipeCard";
 import { RecipeList } from "../components/RecipeList";
 import { Search } from "../components/Search";
@@ -39,9 +39,9 @@ export const Home = () => {
     <div className="home">
       <Search onSearch={searchHandler} />
       <div className="recipes">
-        {error && <div>Error loading recipes</div>}
-        {isLoading && <div>Loading recipes</div>}
-        {recipes && (
+        {error && <div className="info">Error loading recipes</div>}
+        {isLoading && <div className="info">Loading recipes</div>}
+        {recipes && recipes.length > 0 ? (
           <RecipeList>
             {recipes.map((recipe) => {
               return (
@@ -53,6 +53,13 @@ export const Home = () => {
               );
             })}
           </RecipeList>
+        ) : (
+          <div className="info">
+            <div>There are no recipes here &#x1F914;</div>
+            <div>
+              You can add your own recipe <Link to="/add">HERE</Link>.
+            </div>
+          </div>
         )}
       </div>
     </div>

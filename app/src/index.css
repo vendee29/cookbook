@@ -1,20 +1,21 @@
 /* google font */
-@import url('https://fonts.googleapis.com/css2?family=Kurale&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Kurale&display=swap");
 /* layout */
 :root {
-  --primary: #EE6C4D;
-  --error: #e7195a;
+  --primary: #ee6c4d;
+  --transparent: rgba(0, 0, 0, 0.6);
 }
 
 body {
   background: #fdd4ab92;
   margin: 0;
-  font-family: "Roboto";
+  font-family: "Kurale", serif;
 }
+
 header {
   background: #fff;
   width: 100vw;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 header .container {
   max-width: 1400px;
@@ -27,7 +28,9 @@ header .container {
 header a {
   color: #000000;
   text-decoration: none;
-  font-family: 'Kurale', serif;
+}
+
+header h1 {
   letter-spacing: 2px;
 }
 
@@ -42,9 +45,44 @@ header a {
   margin: 0 auto;
 }
 
+/* drawer */
+
+.drawer-heading {
+  text-align: center;
+}
+
+.drawer-list {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.drawer-list a {
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px;
+  margin: 0 0 10px 0;
+}
+
+.drawer-list a:hover {
+  color: var(--primary);
+}
+
+.drawer-list a:active {
+  color: var(--primary);
+}
+
 /* homepage */
 .home {
   margin: 0;
+}
+
+.info {
+  margin-top: 50px;
+  text-align: center;
+  font-size: 16px;
 }
 
 .recipe-list {
@@ -69,11 +107,27 @@ input[name="search"] {
   margin: 0 auto 10px auto;
 }
 
+/* recipe card */
+.recipe-card * {
+  font-family: "Kurale", serif;
+}
+
+.card-content p {
+  color: var(--transparent);
+  font-size: 14px;
+  margin: 5px auto 20px auto;
+}
+
 .recipe-details-tags {
   margin: 10px 0 0 0;
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
+}
+
+.card-ratings {
+  color: var(--transparent);
+  font-size: 14px;
 }
 
 .recipe-card img {
@@ -83,53 +137,89 @@ input[name="search"] {
   border-radius: 10px;
 }
 
+.expanded-card-content .servings-time {
+  color: var(--transparent);
+  margin: 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+.expanded-card-content h4 {
+  margin: 14px 5px;
+}
+
+.expanded-card-content ul {
+  list-style-type: circle;
+  font-size: 14px;
+}
+
+.recipe-details-steps .ql-editor {
+  padding: 0;
+  font-size: 14px;
+}
+
+.recipe-details-steps ol,
+.recipe-details-steps ul {
+  padding: 0;
+}
+
+.expand-more {
+  margin-left: auto;
+  transition: transform 0.2s ease-in-out;
+}
+
+.expand-more.rotate {
+  transform: rotate(180deg);
+}
+
+.expand-more:hover {
+  cursor: pointer;
+}
+
 /* new recipe form */
-.create-recipe {
+form {
   max-width: 600px;
+  min-width: 350px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+form h3 {
+  text-align: center;
+}
+
+form img[alt="recipe-book"] {
+  width: 60px;
+  display: block;
   margin: 0 auto;
 }
 
-.create-recipe label {
-  font-family: 'Kurale', serif;
-}
-
-.form-heading {
-  text-align: center;
-  font-family: 'Kurale', serif;
-}
-
 .form-small {
-  width: 600px;
+  width: 96%;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-}
-
-.form-small-label {
-  width: 150px;
-}
-
-.form-small-input {
-  width: 150px;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .form-ingredient {
+  width: 96%;
   display: flex;
   align-items: center;
   gap: 5px;
 }
 
-.form-remove-btn {
-  height: 1.5rem;
-  padding: 0 5px;
-}
-
 .form-editor {
-  margin: 10px 0;
+  width: 96%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
-.markdown-editor .ql-editor{
-  min-height:150px;
+.markdown-editor .ql-editor {
+  min-height: 150px;
   background-color: white;
 }
 
@@ -137,55 +227,52 @@ input[name="search"] {
   background-color: rgba(255, 255, 255, 0.549);
 }
 
-.recipe-details-steps .ql-editor{
-  height: auto;
-  padding: 0 8px;
-  font-family: "Roboto";
-  font-size: 14px;
-  
-}
-
-.recipe-details-steps .ql-container{
-  height: 50px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
-
-input, textarea {
+input,
+textarea {
   padding: 5px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 100%;
+  margin: 10px auto;
+  width: 95%;
   border: 1px solid #ddd;
   border-radius: 4px;
   font-family: "Roboto";
-
 }
 
 textarea {
   resize: vertical;
+}
 
+.private {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.private input {
+  margin: 0;
+  width: 1rem;
+  height: 1rem;
+}
+
+.ingredient-btn {
+  padding: 3px 5px;
+  display: inline-block;
 }
 
 form button {
   background: var(--primary);
   border: 0;
   color: #fff;
-  padding: 10px;
-  font-family: "Roboto";
+  padding: 8px 30px;
+  font-family: inherit;
   border-radius: 4px;
   cursor: pointer;
+  display: block;
+  margin: 0 auto;
 }
-div.error {
-  padding: 10px;
-  background: #ffefef;
-  border: 1px solid var(--error);
-  color: var(--error);
-  border-radius: 4px;
-  margin: 20px 0;
-}
-input.error {
-  border: 1px solid var(--error);
+
+.css-4xbbh5-MuiAutocomplete-root .MuiOutlinedInput-root.MuiInputBase-sizeSmall {
+  font-size: 13px;
+  font-family: "Roboto" serif;
 }
 
 /* navbar */
@@ -199,7 +286,7 @@ nav button {
 }
 
 nav span {
-  font-family: 'Kurale', serif;
+  font-family: "Kurale", serif;
 }
 
 nav button {
@@ -208,31 +295,10 @@ nav button {
   border: 2px solid var(--primary);
   padding: 6px 10px;
   border-radius: 4px;
-  font-family: 'Kurale', serif;
+  font-family: "Kurale", serif;
   cursor: pointer;
   font-size: 1em;
   margin-left: 10px;
-}
-
-/* drawer */
-
-.drawer-link {
-  text-align: center;
-  text-decoration: none;
-  font-size: 20px;
-  margin: 0 0 10px 0;
-}
-
-.drawer-link:hover {
-  color: var(--primary)
-}
-
-.drawer-link:active {
-  color: var(--primary)
-}
-
-.drawer-link:visited {
-  color: #8e412e;
 }
 
 /* auth forms */
@@ -243,27 +309,6 @@ form.login {
   padding: 20px;
   background: #fff;
   border-radius: 4px;
-}
-
-/*scrollbar*/
-.recipe-details-steps {
-  scrollbar-width: auto;
-  scrollbar-color: #f1b6b3 #ffffff;
-}
-
-/* Chrome, Edge, and Safari */
-.recipe-details-steps ::-webkit-scrollbar {
-  width: 5px;
-}
-
-.recipe-details-steps ::-webkit-scrollbar-track {
-  background: hsl(0, 100%, 97%);
-  border-radius: 10px;
-}
-
-.recipe-details-steps ::-webkit-scrollbar-thumb {
-  background-color: #ff9590;
-  border-radius: 10px;
 }
 
 @media screen and (max-width: 690px) {
@@ -293,5 +338,17 @@ form.login {
 
   .navbar-left img[alt="logo"] {
     display: none;
+  }
+
+  .navbar-right {
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .info {
+    font-size: 20px;
+    margin-top: calc(100vh/4);
   }
 }
