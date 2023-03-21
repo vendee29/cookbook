@@ -4,7 +4,7 @@ import { RecipeValue } from "../utils/types.js";
 
 export const recipesRepository = {
   async getAllPublicRecipes(searchTerm: string | undefined) {
-    if (searchTerm === undefined) {
+    if (searchTerm === undefined || searchTerm.trim().length === 0) {
       const recipes = await Recipe.find({ private: false }).sort({
         createdAt: -1,
       });
@@ -30,8 +30,8 @@ export const recipesRepository = {
   // get all recipes of one user
   async getRecipes(user_id: string, searchTerm: string | undefined) {
     if (searchTerm === undefined) {
-    const recipes = await Recipe.find({ user_id }).sort({ createdAt: -1 }); // desc order
-    return recipes;
+      const recipes = await Recipe.find({ user_id }).sort({ createdAt: -1 }); // desc order
+      return recipes;
     } else {
       const recipes = await Recipe.find({
         $and: [
@@ -44,7 +44,7 @@ export const recipesRepository = {
   },
 
   // get a single recipe
-  async getRecipe(id: any, user_id: any) {
+  async getRecipe(id: string, user_id: string) {
     const recipe = await Recipe.findById(id, user_id);
     return recipe;
   },
@@ -56,7 +56,7 @@ export const recipesRepository = {
   },
 
   // delete a recipe
-  async deleteRecipe(id: any, user_id: any) {
+  async deleteRecipe(id: string, user_id: string) {
     const deletedRecipe = await Recipe.findOneAndDelete({
       _id: id,
       user_id: user_id,
@@ -65,7 +65,7 @@ export const recipesRepository = {
   },
 
   // update a recipe
-  async updateRecipe(recipe_id: any, recipe: RecipeValue, user_id: any) {
+  async updateRecipe(recipe_id: string, recipe: RecipeValue, user_id: string) {
     const updatedRecipe = await Recipe.findOneAndUpdate(
       { _id: recipe_id, user_id: user_id },
       { $set: recipe },
@@ -75,12 +75,13 @@ export const recipesRepository = {
   },
 
   // rate a recipe
-  async rateRecipe(recipe_id: any, user_id: any, rating: number) {
+  async rateRecipe(recipe_id: string, user_id: string, rating: number) {
     const recipe = await Recipe.findOne({
       _id: recipe_id,
       "rating.user_id": user_id,
     });
 
+    // update existing rating from the user
     if (recipe && recipe.rating) {
       recipe.rating.forEach((r) => {
         if (
@@ -93,6 +94,8 @@ export const recipesRepository = {
 
       const ratedRecipe = await recipe.save();
       return ratedRecipe;
+
+      // add new rating from the user
     } else {
       const ratedRecipe = await Recipe.findOneAndUpdate(
         { _id: recipe_id },
@@ -103,6 +106,7 @@ export const recipesRepository = {
       return ratedRecipe;
     }
   },
+
   //get all recipe tags
   async getAllTags() {
     const tags = await Recipe.distinct("tags.label", { private: false });

@@ -1,15 +1,13 @@
-import { userRepository as user } from "../repositories/userRepository.js";
-
-import mongoose from "mongoose";
+import { userRepository } from "../repositories/userRepository.js";
 
 export const userService = {
   async loginUser(email: string, password: string) {
-    const data = await user.loginUser(email, password);
+    const data = await userRepository.loginUser(email, password);
     return data;
   },
 
   async signupUser(email: string, password: string) {
-    const data = await user.signupUser(email, password);
+    const data = await userRepository.signupUser(email, password);
     return data;
   }
 }

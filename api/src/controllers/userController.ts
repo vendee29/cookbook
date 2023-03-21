@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { userService } from "../services/userService.js";
 import createToken from "../utils/createToken.js";
+import { handleControllerError } from "../utils/handleControllerError.js";
 
 export const userController = {
   async loginUser(req: Request, res: Response) {
@@ -10,11 +11,7 @@ export const userController = {
       const token = createToken(user._id);
       res.status(200).json({ email, token, id: user._id });
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-      } else {
-        res.status(400).json({ error: "Something went wrong..." });
-      }
+      handleControllerError(res, error, "Something went wrong");
     }
   },
   async signupUser(req: Request, res: Response) {
@@ -24,11 +21,7 @@ export const userController = {
       const token = createToken(user._id);
       res.status(200).json({ email, token, id: user._id });
     } catch (error) {
-      if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-      } else {
-        res.status(400).json({ error: "Something went wrong..." });
-      }
+      handleControllerError(res, error, "Something went wrong");
     }
   },
 };

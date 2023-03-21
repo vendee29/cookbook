@@ -11,102 +11,112 @@ export const recipeService = {
       if (!foundRecipes) return [];
       return foundRecipes;
     } catch (error) {
-      throw new Error("Error searching for recipes");
+      throw new Error("Something went wrong, no recipes were found");
     }
   },
 
-  async getRecipes(user_id: any, searchTerm: string | undefined) {
-    const data = await recipesRepository.getRecipes(user_id, searchTerm);
-    if (!data) return [];
-    return data;
+  async getRecipes(user_id: string, searchTerm: string | undefined) {
+    try {
+      const recipes = await recipesRepository.getRecipes(user_id, searchTerm);
+      if (!recipes) return [];
+      return recipes;
+    } catch (error) {
+      throw new Error("Something went wrong, no recipes were found");
+    }
   },
 
-  async getRecipe(id: any, user_id: any) {
-    const recipe = await recipesRepository.getRecipe(id, user_id);
-    if (!recipe) {
+  async getRecipe(id: string, user_id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new Error("No such recipe");
     }
-    return recipe;
+    try {
+      const recipe = await recipesRepository.getRecipe(id, user_id);
+      return recipe;
+    } catch (error) {
+      throw new Error("Something went wrong, no recipe was found");
+    }
   },
 
   async createRecipe(recipe: RecipeValue) {
-    let emptyFields: string[] = [];
+    if (
+      !recipe.title ||
+      recipe.title.trim().length === 0 ||
+      !recipe.steps ||
+      recipe.steps.trim().length === 0
+    ) {
+      throw new Error("Please fill in all the required fields");
+    }
 
-    if (!recipe.title) {
-      emptyFields.push("title");
-    }
-    if (!recipe.ingredients || recipe.ingredients.length < 1) {
-      emptyFields.push("ingredients");
-    }
-    if (!recipe.steps) {
-      emptyFields.push("steps");
-    }
-    if (emptyFields.length > 0) {
-      return {
-        error: "Please fill in all the fields",
-        emptyFields: emptyFields,
-      };
-    }
     try {
       const createdRecipe = await recipesRepository.createRecipe(recipe);
       return createdRecipe;
     } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      } else {
-        throw new Error("Something went wrong");
-      }
+      throw new Error("Something went wrong, no recipe was created");
     }
   },
 
-  async deleteRecipe(id: any, user_id: any) {
+  async deleteRecipe(id: string, user_id: string) {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       throw new Error("No such recipe");
     }
-    const deletedRecipe = await recipesRepository.deleteRecipe(id, user_id);
-    if (!deletedRecipe) {
-      throw new Error("No such recipe");
+    try {
+      const deletedRecipe = await recipesRepository.deleteRecipe(id, user_id);
+      return deletedRecipe;
+    } catch (error) {
+      throw new Error("Something went wrong, the recipe was not deleted");
     }
-    return deletedRecipe;
   },
 
-  async updateRecipe(recipe_id: any, recipe: any, user_id: any) {
+  async updateRecipe(recipe_id: string, recipe: RecipeValue, user_id: string) {
     if (!mongoose.Types.ObjectId.isValid(recipe_id)) {
       throw new Error("No such recipe");
     }
-    const updatedRecipe = await recipesRepository.updateRecipe(
-      recipe_id,
-      recipe,
-      user_id
-    );
-    if (!updatedRecipe) {
-      throw new Error("No such recipe");
+    try {
+      const updatedRecipe = await recipesRepository.updateRecipe(
+        recipe_id,
+        recipe,
+        user_id
+      );
+      return updatedRecipe;
+    } catch (error) {
+      throw new Error("Something went wrong, the recipe was not updated");
     }
-    return updatedRecipe;
   },
 
-  async rateRecipe(recipe_id: any, user_id: any, rating: number) {
+  async rateRecipe(
+    recipe_id: string,
+    user_id: string,
+    rating: number | undefined
+  ) {
     if (!mongoose.Types.ObjectId.isValid(recipe_id)) {
       throw new Error("No such recipe");
     }
 
-    const ratedRecipe = await recipesRepository.rateRecipe(
-      recipe_id,
-      user_id,
-      rating
-    );
-
-    if (!ratedRecipe) {
-      throw new Error("No such recipe");
+    if (!rating || rating < 1 || rating > 5) {
+      throw new Error("Please provide valid rating");
     }
-    return ratedRecipe;
+
+    try {
+      const ratedRecipe = await recipesRepository.rateRecipe(
+        recipe_id,
+        user_id,
+        rating
+      );
+      return ratedRecipe;
+    } catch (error) {
+      throw new Error("Something went wrong, the recipe was not rated");
+    }
   },
 
   async getAllTags() {
-    const tags = await recipesRepository.getAllTags();
-    if (!tags) {
-      return [];
+    try {
+      const tags = await recipesRepository.getAllTags();
+      if (!tags) {
+        return [];
+      }
+      return tags;
+    } catch (error) {
+      throw new Error("Something went wrong, no tags were found");
     }
-    return tags;
   },
 };

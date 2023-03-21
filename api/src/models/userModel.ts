@@ -1,13 +1,9 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import validator from "validator";
+import { UserValue } from "../utils/types.js";
 
 const Schema = mongoose.Schema;
-
-export interface UserValue extends mongoose.Document {
-  email: string;
-  password: string;
-}
 
 interface UserModel extends mongoose.Model<UserValue> {
   signup(email: string, password: string): Promise<UserValue>;
