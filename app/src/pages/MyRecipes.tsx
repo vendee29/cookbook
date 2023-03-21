@@ -33,7 +33,7 @@ export const MyRecipes = () => {
     <div className="recipes">
       {error && <div className="info">Error loading recipes</div>}
       {isLoading && <div className="info">Loading recipes</div>}
-      {myRecipes && myRecipes.length > 0 ? (
+      {myRecipes && myRecipes.length > 0 && (
         <RecipeList>
           {myRecipes.map((recipe) => {
             return (
@@ -45,7 +45,8 @@ export const MyRecipes = () => {
             );
           })}
         </RecipeList>
-      ) : (
+      )}
+      {myRecipes && myRecipes.length < 1 && (
         <div className="info">
           <div>There are no recipes here &#x1F914;</div>
           <div>

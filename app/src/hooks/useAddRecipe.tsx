@@ -27,9 +27,6 @@ export function useAddRecipe() {
         throwError(err);
       }
     },
-    onError: (error) => {
-      console.log(error);
-    },
     onSuccess: () => {
       queryClient.invalidateQueries(["recipes"], {
         exact: true,

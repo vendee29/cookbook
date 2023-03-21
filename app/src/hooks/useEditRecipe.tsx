@@ -32,9 +32,6 @@ export function useEditRecipe() {
         throwError(err);
       }
     },
-    onError: (error) => {
-      console.log(error);
-    },
     onSuccess: (data: RecipeValue) => {
       queryClient.invalidateQueries(["recipes", data._id]);
       navigate("/");

@@ -4,12 +4,13 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { useEditRecipe } from "../hooks/useEditRecipe";
 import { useGetRecipe } from "../hooks/useGetRecipe";
 
+import { CustomizedSnackbar } from "../components/Snackbar";
 import { RecipeForm } from "../components/RecipeForm";
 import { CreatedRecipe } from "../utils/types";
 
 export const EditRecipe = () => {
   const { state: authState } = useAuthContext();
-  const { mutate } = useEditRecipe();
+  const { mutate, error: editError } = useEditRecipe();
   const { recipeId } = useParams();
   if (recipeId === undefined) {
     return <Navigate to="/" />;
@@ -41,6 +42,7 @@ export const EditRecipe = () => {
           onSubmit={handleSubmit}
         />
       )}
+      {editError && <CustomizedSnackbar severity="error" message="Oops! Something went wrong..."/>}
     </>
   );
 };

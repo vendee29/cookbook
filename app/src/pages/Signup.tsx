@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useSignup } from "../hooks/useSignup";
+import { CustomizedSnackbar } from "../components/Snackbar";
 
 export const Signup = () => {
   const [email, setEmail] = React.useState("");
@@ -9,7 +10,7 @@ export const Signup = () => {
   const handleSubmit = async (ev: React.FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    await signup(email, password)
+    await signup(email, password);
   };
 
   return (
@@ -30,7 +31,7 @@ export const Signup = () => {
         value={password}
       />
       <button disabled={isLoading}>Sign up</button>
-      {error && <div className="error">{error}</div>}
+      {error && <CustomizedSnackbar severity="error" message={error} />}
     </form>
   );
 };

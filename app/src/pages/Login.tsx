@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useLogin } from "../hooks/useLogin";
+import { CustomizedSnackbar } from "../components/Snackbar";
 
 export const Login = () => {
   const [email, setEmail] = React.useState("");
@@ -30,7 +31,7 @@ export const Login = () => {
         value={password}
       />
       <button disabled={isLoading}>Log in</button>
-      {error && <div className="error">{error}</div>}
+      {error && <CustomizedSnackbar severity="error" message={error}/>}
     </form>
   );
 };

@@ -40,8 +40,8 @@ export const Home = () => {
       <Search onSearch={searchHandler} />
       <div className="recipes">
         {error && <div className="info">Error loading recipes</div>}
-        {isLoading && <div className="info">Loading recipes</div>}
-        {recipes && recipes.length > 0 ? (
+        {isLoading && <div className="info">Loading recipes...</div>}
+        {recipes && recipes.length > 0 && (
           <RecipeList>
             {recipes.map((recipe) => {
               return (
@@ -53,7 +53,8 @@ export const Home = () => {
               );
             })}
           </RecipeList>
-        ) : (
+        )}
+        {recipes && recipes.length < 1 && (
           <div className="info">
             <div>There are no recipes here &#x1F914;</div>
             <div>

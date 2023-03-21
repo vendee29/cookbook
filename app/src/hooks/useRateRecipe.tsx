@@ -28,9 +28,6 @@ export function useRateRecipe() {
         throwError(err);
       }
     },
-    onError: (error) => {
-      console.log(error);
-    },
     onSuccess: () => {
       queryClient.invalidateQueries(["recipes"], {
         exact: true,

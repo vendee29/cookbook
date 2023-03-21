@@ -9,6 +9,5 @@ export const useAuthContext = () => {
       "useAuthContext must be used inside an AuthContextProvider"
     );
   }
-
   return context;
 };

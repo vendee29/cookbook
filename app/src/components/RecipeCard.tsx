@@ -9,7 +9,7 @@ import Chip from "@mui/material/Chip";
 import Collapse from "@mui/material/Collapse";
 import Rating from "@mui/material/Rating";
 
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
@@ -23,6 +23,7 @@ import { RecipeValue } from "../utils/types";
 // assets
 import chevronDown from "../assets/chevronDown.svg";
 import recipePlaceholder from "../assets/recipe-placeholder.jpg";
+import { CustomizedSnackbar } from "./Snackbar";
 
 interface ExpandMoreProps {
   expand: boolean;
@@ -43,16 +44,18 @@ export const RecipeCard = (props: {
   onTagClick: (tag: string) => void;
 }) => {
   const [expanded, setExpanded] = React.useState(false);
+  const navigate = useNavigate();
   const { state: authState } = useAuthContext();
 
-  const { mutate } = useRateRecipe();
+  const { mutate, error } = useRateRecipe();
 
   const handleRating = (
     event: React.SyntheticEvent<Element, Event>,
     value: number | null
   ) => {
     if (!authState.user || value === null) {
-      return <Navigate to="/login" />;
+      navigate("/login");
+      return;
     }
     const ratingValues = { recipeId: props.recipe._id, rating: value };
     mutate({ token: authState.user.token, ratingValues });
@@ -63,103 +66,108 @@ export const RecipeCard = (props: {
   };
 
   return (
-    <Card
-      className="recipe-card"
-      sx={{
-        maxWidth: 345,
-        minWidth: 270,
-        borderRadius: 2,
-        height: "fit-content",
-      }}
-    >
-      <CardHeader
-        avatar={<Avatar sx={{ bgcolor: "#e57373" }} aria-label="recipe" />}
-        title={props.recipe.title}
-        titleTypographyProps={{
-          fontSize: "15px",
-          fontWeight: "600",
-          fontFamily: "Kurale, serif",
+    <>
+      <Card
+        className="recipe-card"
+        sx={{
+          maxWidth: 345,
+          minWidth: 270,
+          borderRadius: 2,
+          height: "fit-content",
         }}
-        subheader={formatDistanceToNow(new Date(props.recipe.createdAt), {
-          addSuffix: true,
-        })}
-        subheaderTypographyProps={{ fontFamily: "Kurale, serif" }}
-        action={
-          <RecipeMenu
-            recipeId={props.recipe._id}
-            disabledButtons={authState.user?.id !== props.recipe.user_id}
-          />
-        }
-      />
-
-      <CardMedia
-        component="img"
-        height="194"
-        image={props.recipe.img ?? recipePlaceholder}
-        alt={props.recipe.title}
-      />
-      <CardContent className="card-content">
-        <p>{props.recipe.description}</p>
-        {props.recipe.tags && props.recipe.tags.length > 0 && (
-          <div className="recipe-details-tags">
-            {props.recipe.tags.map((tag, index) => {
-              return (
-                <Chip
-                  key={index}
-                  label={tag.label}
-                  variant="outlined"
-                  onClick={() => props.onTagClick(tag.label)}
-                />
-              );
-            })}
-          </div>
-        )}
-      </CardContent>
-      <CardActions disableSpacing sx={{ padding: "0 8px 15px 8px" }}>
-        <Rating
-          sx={{ marginRight: 1 }}
-          name="simple-controlled"
-          value={calculateRating(props.recipe.rating)}
-          onChange={handleRating}
-        />
-        <span className="card-ratings">
-          {props.recipe.rating?.length + " " + "ratings"}
-        </span>
-        <ExpandMore expand={expanded} onClick={handleExpandClick} />
-      </CardActions>
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent
-          className="expanded-card-content"
-          sx={{ padding: "0 auto 0 auto" }}
-        >
-          <p className="servings-time">
-            Servings: {props.recipe.servings ?? ""} | Time:{" "}
-            {props.recipe.time ?? ""}
-          </p>
-          <h4>Ingredients:</h4>
-          {props.recipe.ingredients && props.recipe.ingredients.length > 0 ? (
-            <ul>
-              {props.recipe.ingredients.map((ingredient, index) => (
-                <li key={index}>
-                  {`${ingredient.amount} ${ingredient.ingredient}`}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div>No ingredients</div>
-          )}
-
-          <h4>Method:</h4>
-          {props.recipe.steps && (
-            <ReactQuill
-              className="recipe-details-steps"
-              value={props.recipe.steps}
-              readOnly={true}
-              theme="bubble"
+      >
+        <CardHeader
+          avatar={<Avatar sx={{ bgcolor: "#e57373" }} aria-label="recipe" />}
+          title={props.recipe.title}
+          titleTypographyProps={{
+            fontSize: "15px",
+            fontWeight: "600",
+            fontFamily: "Kurale, serif",
+          }}
+          subheader={formatDistanceToNow(new Date(props.recipe.createdAt), {
+            addSuffix: true,
+          })}
+          subheaderTypographyProps={{ fontFamily: "Kurale, serif" }}
+          action={
+            <RecipeMenu
+              recipeId={props.recipe._id}
+              disabledButtons={authState.user?.id !== props.recipe.user_id}
             />
+          }
+        />
+
+        <CardMedia
+          component="img"
+          height="194"
+          image={props.recipe.img ?? recipePlaceholder}
+          alt={props.recipe.title}
+        />
+        <CardContent className="card-content">
+          <p>{props.recipe.description}</p>
+          {props.recipe.tags && props.recipe.tags.length > 0 && (
+            <div className="recipe-details-tags">
+              {props.recipe.tags.map((tag, index) => {
+                return (
+                  <Chip
+                    key={index}
+                    label={tag.label}
+                    variant="outlined"
+                    onClick={() => props.onTagClick(tag.label)}
+                  />
+                );
+              })}
+            </div>
           )}
         </CardContent>
-      </Collapse>
-    </Card>
+        <CardActions disableSpacing sx={{ padding: "0 8px 15px 8px" }}>
+          <Rating
+            sx={{ marginRight: 1 }}
+            name="simple-controlled"
+            value={calculateRating(props.recipe.rating)}
+            onChange={handleRating}
+          />
+          <span className="card-ratings">
+            {props.recipe.rating?.length + " " + "ratings"}
+          </span>
+          <ExpandMore expand={expanded} onClick={handleExpandClick} />
+        </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent
+            className="expanded-card-content"
+            sx={{ padding: "0 auto 0 auto" }}
+          >
+            <p className="servings-time">
+              Servings: {props.recipe.servings ?? ""} | Time:{" "}
+              {props.recipe.time ?? ""}
+            </p>
+            <h4>Ingredients:</h4>
+            {props.recipe.ingredients && props.recipe.ingredients.length > 0 ? (
+              <ul>
+                {props.recipe.ingredients.map((ingredient, index) => (
+                  <li key={index}>
+                    {`${ingredient.amount} ${ingredient.ingredient}`}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div>No ingredients</div>
+            )}
+
+            <h4>Method:</h4>
+            {props.recipe.steps && (
+              <ReactQuill
+                className="recipe-details-steps"
+                value={props.recipe.steps}
+                readOnly={true}
+                theme="bubble"
+              />
+            )}
+          </CardContent>
+        </Collapse>
+      </Card>
+      {error && (
+        <CustomizedSnackbar severity="error" message="Something went wrong" />
+      )}
+    </>
   );
 };
