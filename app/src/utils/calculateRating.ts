@@ -6,5 +6,5 @@ export function calculateRating(
   const sum = ratings
     .map((rating) => rating.rating)
     .reduce((acc, val) => acc + val);
-  return sum / ratings.length;
+  return Math.round(sum / ratings.length);
 }
