@@ -6,7 +6,7 @@ import { RecipeValue } from "../utils/types";
 
 export function useGetRecipe(
   token: string | undefined,
-  recipeId: string
+  recipeId: string | undefined
 ): UseQueryResult<RecipeValue | null, Error> {
   return useQuery({
     queryKey: ["recipe", recipeId],
@@ -24,6 +24,6 @@ export function useGetRecipe(
         throwError(err);
       }
     },
-    enabled: token !== undefined,
+    enabled: token !== undefined && recipeId !== undefined,
   });
 }

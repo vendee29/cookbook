@@ -12,9 +12,6 @@ export const EditRecipe = () => {
   const { state: authState } = useAuthContext();
   const { mutate, error: editError } = useEditRecipe();
   const { recipeId } = useParams();
-  if (recipeId === undefined) {
-    return <Navigate to="/" />;
-  }
   const {
     data: recipe,
     isLoading,
@@ -26,7 +23,7 @@ export const EditRecipe = () => {
   }
 
   const handleSubmit = (editedRecipe: CreatedRecipe) => {
-    if (!authState.user) return;
+    if (!authState.user || !recipeId) return;
     mutate({ token: authState.user.token, recipeId, formValues: editedRecipe });
   };
 

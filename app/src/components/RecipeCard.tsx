@@ -9,7 +9,6 @@ import Chip from "@mui/material/Chip";
 import Collapse from "@mui/material/Collapse";
 import Rating from "@mui/material/Rating";
 
-import { useNavigate } from "react-router-dom";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.bubble.css";
@@ -44,21 +43,20 @@ export const RecipeCard = (props: {
   onTagClick: (tag: string) => void;
 }) => {
   const [expanded, setExpanded] = React.useState(false);
-  const navigate = useNavigate();
   const { state: authState } = useAuthContext();
 
-  const { mutate, error } = useRateRecipe();
+  const { mutateAsync, error } = useRateRecipe();
 
   const handleRating = (
     event: React.SyntheticEvent<Element, Event>,
     value: number | null
   ) => {
-    if (!authState.user || value === null) {
-      navigate("/login");
-      return;
+    if (value === null) {
+      value = calculateRating(props.recipe.rating);
     }
+    const token = authState.user?.token ?? undefined
     const ratingValues = { recipeId: props.recipe._id, rating: value };
-    mutate({ token: authState.user.token, ratingValues });
+    mutateAsync({ token, ratingValues });
   };
 
   const handleExpandClick = () => {
@@ -99,7 +97,7 @@ export const RecipeCard = (props: {
         <CardMedia
           component="img"
           height="194"
-          image={props.recipe.img ?? recipePlaceholder}
+          image={props.recipe.img && props.recipe.img.length > 0 ? props.recipe.img : recipePlaceholder}
           alt={props.recipe.title}
         />
         <CardContent className="card-content">

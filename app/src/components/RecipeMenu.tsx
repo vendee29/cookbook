@@ -2,7 +2,7 @@ import * as React from "react";
 import IconButton from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useDeleteRecipe } from "../hooks/useDeleteRecipe";
@@ -16,7 +16,7 @@ export const RecipeMenu = (props: {
   const { state: authState } = useAuthContext();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [shouldNavigate, setShouldNavigate] = React.useState(false);
+  const navigate = useNavigate();
 
   const { mutate, error } = useDeleteRecipe();
 
@@ -29,7 +29,7 @@ export const RecipeMenu = (props: {
   const handleClose = (action: string) => {
     setAnchorEl(null);
     if (action === "Edit") {
-      setShouldNavigate(true);
+      navigate(`/edit/${props.recipeId}`);
     }
     if (action === "Delete" && authState.user) {
       mutate({ recipeId: props.recipeId, token: authState.user.token });
@@ -70,7 +70,6 @@ export const RecipeMenu = (props: {
             Delete
           </MenuItem>
         </Menu>
-        {shouldNavigate && <Navigate to={`/edit/${props.recipeId}`} />}
       </div>
       {error && (
         <CustomizedSnackbar severity="error" message="Something went wrong" />
