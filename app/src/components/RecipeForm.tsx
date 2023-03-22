@@ -31,7 +31,7 @@ export const RecipeForm = (props: RecipeFormProps) => {
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    let data = [...ingredientFields];
+    const data = [...ingredientFields];
     data[index][event.target.name] = event.target.value;
     setIngredientFields(data);
   };
@@ -42,7 +42,7 @@ export const RecipeForm = (props: RecipeFormProps) => {
   };
 
   const removeIngredientFields = (index: number) => {
-    let data = [...ingredientFields];
+    const data = [...ingredientFields];
     data.splice(index, 1);
     setIngredientFields(data);
   };
@@ -97,7 +97,7 @@ export const RecipeForm = (props: RecipeFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="recipe-form">
       <h3>{props.heading}</h3>
       <img src={recipeIcon} alt="recipe-book" />
       <label>Title:</label>

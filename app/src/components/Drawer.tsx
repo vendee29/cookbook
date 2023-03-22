@@ -27,7 +27,7 @@ export const TemporaryDrawer = (props: { disabled: boolean }) => {
     queryClient.setQueryData(["recipes"], allRecipes);
   };
 
-  const toggleDrawer = (open: boolean) => (event: React.MouseEvent) => {
+  const toggleDrawer = (open: boolean) => () => {
     setState(open);
   };
 

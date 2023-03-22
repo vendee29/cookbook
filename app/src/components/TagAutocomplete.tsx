@@ -35,6 +35,7 @@ export const TagAutocomplete = (props: {
       size="small"
       renderTags={(value: readonly string[], getTagProps) =>
         value.map((option: string, index: number) => (
+          // eslint-disable-next-line
           <Chip variant="filled" label={option} {...getTagProps({ index })} />
         ))
       }

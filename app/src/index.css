@@ -178,7 +178,7 @@ input[name="search"] {
 }
 
 /* new recipe form */
-form {
+.recipe-form {
   max-width: 600px;
   min-width: 350px;
   margin: 0 auto;
@@ -305,9 +305,10 @@ nav button {
 /* auth forms */
 form.signup,
 form.login {
-  min-width: 300px;
+  height: fit-content;
+  min-width: 250px;
   max-width: 400px;
-  margin: 40px auto;
+  margin: auto;
   padding: 20px;
   background: #fff;
   border-radius: 4px;
@@ -323,6 +324,7 @@ form.login {
   .home > div {
     width: 95%;
   }
+  
 }
 
 @media screen and (max-width: 600px) {
@@ -340,7 +342,8 @@ form.login {
   }
 
   .navbar-left img[alt="logo"] {
-    display: none;
+    width: 30px;
+
   }
 
   .navbar-right {
